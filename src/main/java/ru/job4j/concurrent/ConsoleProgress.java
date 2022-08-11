@@ -18,15 +18,15 @@ public class ConsoleProgress implements java.lang.Runnable {
         char[] process = {'\\', '|', '/'};
         int count = ZERO;
         System.out.print("Loading ... |.");
-        try {
             while (!Thread.currentThread().isInterrupted()) {
                 System.out.print("\r load: " + process[count++]);
                 count = count == process.length ? ZERO : count;
-                Thread.sleep(500);
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
             }
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
     }
 }
 
