@@ -25,7 +25,7 @@ public class ConsoleProgress implements java.lang.Runnable {
                 Thread.sleep(500);
             }
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Thread.currentThread().interrupt();
         }
     }
 }
