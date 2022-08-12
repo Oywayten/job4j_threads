@@ -7,17 +7,23 @@ import java.net.URL;
 
 public class Wget implements Runnable {
     private final String url;
+    private final String file;
     private final int speed;
+    private static final int OFF = 0;
+    private static final int BUF_SIZE = 1024;
+    private static final int OUT_OF = -1;
 
-    public Wget(String url, int speed) {
+    public Wget(String url, String file, int speed) {
         this.url = url;
+        this.file = file;
         this.speed = speed;
     }
 
     public static void main(String[] args) throws InterruptedException {
         String url = args[0];
-        int speed = Integer.parseInt(args[1]);
-        Thread wget = new Thread(new Wget(url, speed));
+        String file = args[1];
+        int speed = Integer.parseInt(args[2]);
+        Thread wget = new Thread(new Wget(url, file, speed));
         wget.start();
         wget.join();
     }
@@ -25,14 +31,14 @@ public class Wget implements Runnable {
     @Override
     public void run() {
         try (BufferedInputStream in = new BufferedInputStream(new URL(url).openStream());
-             FileOutputStream fileOutputStream = new FileOutputStream("pom_tmp.xml")) {
-            byte[] dataBuffer = new byte[1024];
+             FileOutputStream fileOutputStream = new FileOutputStream(file)) {
+            byte[] dataBuffer = new byte[BUF_SIZE];
             int bytesRead;
             long preReadTime = System.currentTimeMillis();
-            while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
+            while ((bytesRead = in.read(dataBuffer, OFF, BUF_SIZE)) != OUT_OF) {
                 long postReadTime = System.currentTimeMillis();
                 long deltaTime = (postReadTime - preReadTime);
-                fileOutputStream.write(dataBuffer, 0, bytesRead);
+                fileOutputStream.write(dataBuffer, OFF, bytesRead);
                 if (deltaTime < speed) {
                     System.out.println(deltaTime);
                     Thread.sleep(speed - deltaTime);
