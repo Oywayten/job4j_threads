@@ -5,13 +5,21 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 
+/**
+ * Класс имитирует работу утилиты Wget:
+ * Скачивает файл по ссылке и сохраняет его. Если скорость выше указанной, то компенсирует это паузой.
+ *
+ * @author oywayten (cpc1251@mail.ru)
+ * @version 2
+ * @since 12
+ */
 public class Wget implements Runnable {
-    private final String url;
-    private final String file;
-    private final int speed;
     private static final int OFF = 0;
     private static final int BUF_SIZE = 1024;
     private static final int OUT_OF = -1;
+    private final String url;
+    private final String file;
+    private final int speed;
 
     public Wget(String url, String file, int speed) {
         this.url = url;
