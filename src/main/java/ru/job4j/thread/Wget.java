@@ -11,7 +11,6 @@ import java.net.URL;
  *
  * @author oywayten (cpc1251@mail.ru)
  * @version 2
- * @since 12
  */
 public class Wget implements Runnable {
     private static final int OFF = 0;
