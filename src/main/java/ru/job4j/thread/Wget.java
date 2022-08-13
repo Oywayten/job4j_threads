@@ -42,7 +42,9 @@ public class Wget implements Runnable {
 
     @Override
     public void run() {
-        try (BufferedInputStream in = new BufferedInputStream(new URL(url).openStream());
+        try (BufferedInputStream in =
+                     new BufferedInputStream(
+                             new URL(url).openStream());
              FileOutputStream fileOutputStream = new FileOutputStream(file)) {
             byte[] dataBuffer = new byte[BUF_SIZE];
             int bytesRead;
@@ -50,7 +52,7 @@ public class Wget implements Runnable {
             long preReadTime = System.currentTimeMillis();
             while ((bytesRead = in.read(dataBuffer, OFF, BUF_SIZE)) != OUT_OF) {
                 downloadData += bytesRead;
-                if (downloadData == speed) {
+                if (downloadData >= speed) {
                     long postReadTime = System.currentTimeMillis();
                     long deltaTime = postReadTime - preReadTime;
                     if (deltaTime < THOUSAND) {
@@ -62,8 +64,10 @@ public class Wget implements Runnable {
                 }
                 fileOutputStream.write(dataBuffer, OFF, bytesRead);
             }
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException e) {
             e.printStackTrace();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
 }
