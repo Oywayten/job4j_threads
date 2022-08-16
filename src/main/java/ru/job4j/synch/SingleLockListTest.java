@@ -1,17 +1,18 @@
 package ru.job4j.synch;
 
 import org.junit.jupiter.api.Test;
-import static org.assertj.core.api.Assertions.*;
 
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Set;
 import java.util.TreeSet;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class SingleLockListTest {
 
     @Test
     public void add() throws InterruptedException {
-        SingleLockList<Integer> list = new SingleLockList<>(List.of(1)); // убрать лист.оф
+        SingleLockList<Integer> list = new SingleLockList<>(new ArrayList<>());
         Thread first = new Thread(() -> list.add(1));
         Thread second = new Thread(() -> list.add(2));
         first.start();
