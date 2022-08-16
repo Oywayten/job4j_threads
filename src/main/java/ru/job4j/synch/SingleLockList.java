@@ -25,6 +25,6 @@ public class SingleLockList<T> implements Iterable<T> {
     }
 
     private List<T> copy(List<T> list) {
-        return new CopyOnWriteArrayList<T>(list);
+        return new CopyOnWriteArrayList<>(list);
     }
 }
