@@ -27,7 +27,7 @@ public class AccountStorage {
      */
     public synchronized boolean add(Account account) {
         Objects.requireNonNull(account);
-        return accounts.putIfAbsent(account.id(), account) == account;
+        return accounts.putIfAbsent(account.id(), account) == null;
     }
 
     /**
@@ -77,7 +77,7 @@ public class AccountStorage {
      * @throws IllegalStateException, если какого-то из аккаунтов нет в хранилище,
      *                                либо недостаточно средств для перевода
      */
-    public boolean transfer(int fromId, int toId, int amount) {
+    public synchronized boolean transfer(int fromId, int toId, int amount) {
         Optional<Account> from = getById(fromId);
         Optional<Account> to = getById(toId);
         if (from.isEmpty()) {
@@ -86,16 +86,11 @@ public class AccountStorage {
         if (to.isEmpty()) {
             throw new IllegalStateException("Not found account by id = " + toId);
         }
-        Account fromAcc = from.get();
-        Account toAcc = to.get();
-        int fromAmount = fromAcc.amount();
-        if (fromAmount < amount) {
+        if (from.get().amount() < amount) {
             throw new IllegalStateException("Not enough money by id = " + fromId);
         }
-        fromAmount -= amount;
-        int toAmount = toAcc.amount() + amount;
-        update(new Account(fromId, fromAmount));
-        update(new Account(toId, toAmount));
+        update(new Account(fromId, from.get().amount() - amount));
+        update(new Account(toId, to.get().amount() + amount));
         return true;
     }
 }
