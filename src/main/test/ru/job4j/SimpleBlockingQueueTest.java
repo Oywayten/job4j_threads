@@ -1,30 +1,36 @@
 package ru.job4j;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import java.util.Arrays;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.IntStream;
 
-class SimpleBlockingQueueTest {
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.*;
 
+public class SimpleBlockingQueueTest {
     @Test
-    public void whenVolume3AndIntegers5() {
-        SimpleBlockingQueue<Integer> queue = new SimpleBlockingQueue<>(3);
-        Thread producer = new Thread(() -> {
-            queue.offer(1);
-            queue.offer(2);
-            queue.offer(3);
-            queue.offer(4);
-            queue.offer(5);
-        });
-        Thread consumer = new Thread(() -> {
-            assertThat(queue.poll()).isEqualTo(1);
-            assertThat(queue.poll()).isEqualTo(2);
-            assertThat(producer.getState()).isEqualTo(Thread.State.WAITING);
-            assertThat(queue.poll()).isEqualTo(3);
-            assertThat(queue.poll()).isEqualTo(4);
-            assertThat(queue.poll()).isEqualTo(5);
-        });
+    public void whenFetchAllThenGetIt() throws InterruptedException {
+        final CopyOnWriteArrayList<Integer> buffer = new CopyOnWriteArrayList<>();
+        final SimpleBlockingQueue<Integer> queue = new SimpleBlockingQueue<>(5);
+        Thread producer = new Thread(
+                () -> IntStream.range(0, 5).forEach(
+                        queue::offer
+                )
+        );
         producer.start();
+        Thread consumer = new Thread(
+                () -> {
+                    while (!queue.isEmpty() || !Thread.currentThread().isInterrupted()) {
+                        buffer.add(queue.poll());
+                    }
+                }
+        );
         consumer.start();
+        producer.join();
+        consumer.interrupt();
+        consumer.join();
+        assertThat(buffer, is(Arrays.asList(0, 1, 2, 3, 4)));
     }
 }

@@ -71,4 +71,8 @@ public class SimpleBlockingQueue<T> {
             return poll;
         }
     }
+
+    public synchronized boolean isEmpty() {
+        return queue.isEmpty();
+    }
 }
