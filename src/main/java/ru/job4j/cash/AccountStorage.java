@@ -78,11 +78,19 @@ public class AccountStorage {
      * @throws NullPointerException, если нет какого-то из аккаунтов нет в хранилище
      */
     public synchronized boolean transfer(int fromId, int toId, int amount) {
-        if (accounts.get(fromId).amount() < amount) {
+        Account fromAcc = accounts.get(fromId);
+        Account toAcc = accounts.get(toId);
+        if (fromAcc == null) {
+            throw new IllegalStateException("Not found account by id = " + fromId);
+        }
+        if (toAcc == null) {
+            throw new IllegalStateException("Not found account by id = " + toId);
+        }
+        if (fromAcc.amount() < amount) {
             throw new IllegalStateException("Not enough money by id = " + fromId);
         }
-        accounts.get(fromId).setAmount(accounts.get(fromId).amount() - amount);
-        accounts.get(toId).setAmount(accounts.get(toId).amount() + amount);
+        fromAcc.setAmount(fromAcc.amount() - amount);
+        accounts.get(toId).setAmount(toAcc.amount() + amount);
         return true;
     }
 }
