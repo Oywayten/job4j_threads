@@ -74,23 +74,15 @@ public class AccountStorage {
      * @param toId   id аккаунта, на который надо перевести сумму
      * @param amount сумма для перевода
      * @return true, если перевод выполнен успешно
-     * @throws IllegalStateException, если какого-то из аккаунтов нет в хранилище,
-     *                                либо недостаточно средств для перевода
+     * @throws IllegalStateException, если недостаточно средств для перевода
+     * @throws NullPointerException, если нет какого-то из аккаунтов нет в хранилище
      */
     public synchronized boolean transfer(int fromId, int toId, int amount) {
-        Optional<Account> from = getById(fromId);
-        Optional<Account> to = getById(toId);
-        if (from.isEmpty()) {
-            throw new IllegalStateException("Not found account by id = " + fromId);
-        }
-        if (to.isEmpty()) {
-            throw new IllegalStateException("Not found account by id = " + toId);
-        }
-        if (from.get().amount() < amount) {
+        if (accounts.get(fromId).amount() < amount) {
             throw new IllegalStateException("Not enough money by id = " + fromId);
         }
-        update(new Account(fromId, from.get().amount() - amount));
-        update(new Account(toId, to.get().amount() + amount));
+        accounts.get(fromId).setAmount(accounts.get(fromId).amount() - amount);
+        accounts.get(toId).setAmount(accounts.get(toId).amount() + amount);
         return true;
     }
 }

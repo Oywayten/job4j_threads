@@ -1,10 +1,15 @@
 package ru.job4j.cash;
 
+import net.jcip.annotations.GuardedBy;
+import net.jcip.annotations.ThreadSafe;
+
 import java.util.Objects;
 
+@ThreadSafe
 public final class Account {
     private final int id;
-    private final int amount;
+    @GuardedBy("this")
+    private int amount;
 
     public Account(int id, int amount) {
         this.id = id;
@@ -15,12 +20,16 @@ public final class Account {
         return id;
     }
 
-    public int amount() {
+    public synchronized int amount() {
         return amount;
     }
 
+    public synchronized void setAmount(int newAmount) {
+        this.amount = newAmount;
+    }
+
     @Override
-    public boolean equals(Object obj) {
+    public synchronized boolean equals(Object obj) {
         if (obj == this) {
             return true;
         }
@@ -33,12 +42,12 @@ public final class Account {
     }
 
     @Override
-    public int hashCode() {
+    public synchronized int hashCode() {
         return Objects.hash(id, amount);
     }
 
     @Override
-    public String toString() {
+    public synchronized String toString() {
         return "Account["
                 + "id=" + id + ", "
                 + "amount=" + amount + ']';
