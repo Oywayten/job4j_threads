@@ -9,7 +9,7 @@ public class Base {
      */
     private final int id;
     /**
-     *version - определяет достоверность версии в кеше.
+     * определяет достоверность версии в кеше.
      */
     private final int version;
     /**
