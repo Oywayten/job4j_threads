@@ -33,15 +33,11 @@ public class SimpleBlockingQueue<T> {
      *
      * @param value объект для добавления в очередь {@link #queue}
      */
-    public void offer(T value) {
+    public void offer(T value) throws InterruptedException {
         synchronized (this) {
             while (queue.size() == limit) {
-                try {
-                    System.out.println("offer's wait");
-                    this.wait();
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
+                System.out.println("offer's wait");
+                this.wait();
             }
             queue.offer(value);
             System.out.println("offer(" + value + ")");
@@ -55,15 +51,11 @@ public class SimpleBlockingQueue<T> {
      *
      * @return объект из очереди {@link #queue}
      */
-    public T poll() {
+    public T poll() throws InterruptedException {
         synchronized (this) {
             while (queue.size() == 0) {
-                try {
-                    System.out.println("poll's wait");
-                    this.wait();
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
+                System.out.println("poll's wait");
+                this.wait();
             }
             T poll = queue.poll();
             System.out.println("poll is " + poll);

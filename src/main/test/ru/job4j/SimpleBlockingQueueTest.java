@@ -16,14 +16,24 @@ public class SimpleBlockingQueueTest {
         final SimpleBlockingQueue<Integer> queue = new SimpleBlockingQueue<>(5);
         Thread producer = new Thread(
                 () -> IntStream.range(0, 5).forEach(
-                        queue::offer
+                        value -> {
+                            try {
+                                queue.offer(value);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
                 )
         );
         producer.start();
         Thread consumer = new Thread(
                 () -> {
                     while (!queue.isEmpty() || !Thread.currentThread().isInterrupted()) {
-                        buffer.add(queue.poll());
+                        try {
+                            buffer.add(queue.poll());
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
         );
