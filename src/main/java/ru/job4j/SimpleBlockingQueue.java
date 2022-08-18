@@ -36,11 +36,9 @@ public class SimpleBlockingQueue<T> {
     public void offer(T value) throws InterruptedException {
         synchronized (this) {
             while (queue.size() == limit) {
-                System.out.println("offer's wait");
                 this.wait();
             }
             queue.offer(value);
-            System.out.println("offer(" + value + ")");
             this.notifyAll();
         }
     }
@@ -54,11 +52,9 @@ public class SimpleBlockingQueue<T> {
     public T poll() throws InterruptedException {
         synchronized (this) {
             while (queue.size() == 0) {
-                System.out.println("poll's wait");
                 this.wait();
             }
             T poll = queue.poll();
-            System.out.println("poll is " + poll);
             this.notifyAll();
             return poll;
         }
