@@ -19,7 +19,7 @@ public class Cache {
     }
 
     public boolean update(Base model) {
-        return memory.computeIfPresent(model.getId(), checkVersion(model)) == model;
+        return memory.computeIfPresent(model.getId(), checkVersion(model)) != null;
     }
 
     /**
@@ -32,11 +32,10 @@ public class Cache {
      */
     private BiFunction<Integer, Base, Base> checkVersion(Base model) {
         return (integer, base) -> {
-            Base stored = memory.get(model.getId());
-            if (stored.getVersion() != model.getVersion()) {
+            if (base.getVersion() != model.getVersion()) {
                 throw new OptimisticException("Versions are not equal");
             }
-            return stored;
+            return new Base(model.getId(), model.getVersion() + 1);
 
         };
     }
