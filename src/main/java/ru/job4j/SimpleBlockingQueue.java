@@ -20,8 +20,14 @@ import java.util.Queue;
 @ThreadSafe
 public class SimpleBlockingQueue<T> {
 
+    /**
+     * Очередь объектов параметризованного типа
+     */
     @GuardedBy("this")
     private final Queue<T> queue = new LinkedList<>();
+    /**
+     * Ограничение размера блокирующей очереди
+     */
     private final int limit;
 
     public SimpleBlockingQueue(int limit) {
