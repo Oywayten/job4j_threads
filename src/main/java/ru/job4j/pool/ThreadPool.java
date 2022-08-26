@@ -28,36 +28,30 @@ public class ThreadPool {
      */
     private final SimpleBlockingQueue<Runnable> tasks = new SimpleBlockingQueue<>(SIZE);
 
-    public ThreadPool() {
-        getThreads();
-    }
-
     /**
-     * Инициализация пула по количеству ядер в системе {@link #SIZE}
+     * Конструктор с инициализацией пула по количеству ядер в системе {@link #SIZE}
      */
-    private void getThreads() {
+    public ThreadPool() {
         for (int i = 0; i < SIZE; i++) {
-            new Thread(() -> {
+            Thread newThread = new Thread(() -> {
                 try {
-                    tasks.poll();
+                    tasks.poll().run();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-            }).start();
+            });
+            newThread.start();
+            threads.add(newThread);
         }
     }
 
     /**
      * Метод добавляет задачи в блокирующую очередь tasks
      *
-     * @param job задача
+     * @param job задача для добавления в очередь
      */
-    public void work(Runnable job) {
-        try {
-            tasks.offer(job);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    public void work(Runnable job) throws InterruptedException {
+        tasks.offer(job);
     }
 
     public void shutdown() {
