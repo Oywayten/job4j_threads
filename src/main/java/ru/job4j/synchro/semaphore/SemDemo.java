@@ -1,4 +1,4 @@
-package ru.job4j.semaphore;
+package ru.job4j.synchro.semaphore;
 
 import java.util.concurrent.Semaphore;
 

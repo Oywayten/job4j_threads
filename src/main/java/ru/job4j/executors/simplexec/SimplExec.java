@@ -1,4 +1,4 @@
-package ru.job4j.exec.simplexec;
+package ru.job4j.executors.simplexec;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
