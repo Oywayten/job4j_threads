@@ -6,29 +6,18 @@ import java.util.concurrent.Executors;
 public class EmailNotification {
     public static final int SLEEP_TIME = 100;
     private final ExecutorService pool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-    private String subject;
-    private String body;
 
     /**
-     * Конструктор принимает пользователя и создает задачу,
-     * которая будет создавать данные для пользователя и передавать их в метод send
-     */
-    public EmailNotification() {
-        pool.submit(() -> {
-
-        });
-    }
-
-    /**
-     * Метод отправляет почту через ExecutorService
+     * Метод отправляет почту через {@code pool}
      * Берет данные пользователя и подставляет в шаблон
      *
      * @param user объект User с данными пользователя для отправки
      */
     private void emailTo(User user) {
-        subject = String.format("Notification %s to email %s.", user.username, user.email);
-        body = String.format("Add a new event to %s", user.username);
-        send(subject, body, user.email);
+        pool.submit(() -> send(
+                String.format("Notification %s to email %s.", user.getUsername(), user.getEmail()),
+                String.format("Add a new event to %s", user.getUsername()),
+                user.getEmail()));
     }
 
     /**
@@ -41,20 +30,14 @@ public class EmailNotification {
         }
     }
 
+    /**
+     * Метод для отправки сообщений
+     *
+     * @param subject тема сообщения
+     * @param body    тело сообщения
+     * @param email   электронный адрес для отправки сообщения
+     */
     public void send(String subject, String body, String email) {
 
-    }
-
-    /**
-     * Модель User описывают поля username, email
-     */
-    static class User {
-        private final String username;
-        private final String email;
-
-        public User(String username, String email) {
-            this.username = username;
-            this.email = email;
-        }
     }
 }
