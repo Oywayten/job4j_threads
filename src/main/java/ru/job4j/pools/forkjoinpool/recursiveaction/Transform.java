@@ -25,7 +25,6 @@ class Transform extends RecursiveAction {
     @Override
     protected void compute() {
         if (end - start < seqTreshold) {
-            //todo: дописать программу со страницы 1112
             System.out.println();
         }
     }
