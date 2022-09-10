@@ -1,8 +1,5 @@
 package ru.job4j.pools;
 
-import ru.job4j.email.User;
-
-import java.util.Arrays;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveTask;
 
@@ -19,7 +16,7 @@ public class LookForIndex<T> extends RecursiveTask<Integer> {
     private final int end;
     private final T object;
 
-    public LookForIndex(T[] array, T object, int start, int end) {
+    private LookForIndex(T[] array, T object, int start, int end) {
         this.data = array;
         this.start = start;
         this.end = end;
@@ -27,20 +24,18 @@ public class LookForIndex<T> extends RecursiveTask<Integer> {
     }
 
     /**
-     * Метод демонстрирует работу параллельного
+     * Статический метод для поиска индекса объекта в массиве.
+     * Принимает массив, в котором ищем, и объект, для поиска.
      *
-     * @param args параметры командной строки (не используются)
+     * @param array  массив, в котором ищем
+     * @param object объект, который ищем
+     * @param <T>    параметризованный тип для метода поиска
+     * @return индекс объекта в массиве, либо -1, если объекта нет
      */
-    public static void main(String[] args) {
+    public static <T> int lookForIndex(T[] array, T object) {
+        LookForIndex<T> look = new LookForIndex<>(array, object, 0, array.length);
         ForkJoinPool pool = ForkJoinPool.commonPool();
-        User[] users = new User[100];
-        for (int i = 0; i < users.length; i++) {
-            users[i] = new User("Ivan" + i, i + "@mail.ru");
-        }
-        System.out.println(Arrays.toString(users));
-        LookForIndex<User> task = new LookForIndex<>(users, new User("Ivan5", "5@mail.ru"), 0, users.length);
-        Integer result = pool.invoke(task);
-        System.out.println(result);
+        return pool.invoke(look);
     }
 
     /**
@@ -49,23 +44,30 @@ public class LookForIndex<T> extends RecursiveTask<Integer> {
      */
     @Override
     protected Integer compute() {
-        int index = -1;
         if (end - start < SEQ_TRESHOLD) {
-            for (int i = start; i < end; i++) {
-                if (data[i].equals(object)) {
-                    index = i;
-                }
-            }
-        } else {
-            int middle = (end + start) / 2;
-            LookForIndex<T> task1 = new LookForIndex<>(data, object, start, middle);
-            LookForIndex<T> task2 = new LookForIndex<>(data, object, middle, end);
-            task1.fork();
-            task2.fork();
-            int sum1 = task1.join() != -1 ? task1.join() : 0;
-            int sum2 = task2.join() != -1 ? task2.join() : 0;
-            index = sum1 + sum2;
+            return sequentialSearch();
         }
-        return index;
+        int middle = (end + start) / 2;
+        LookForIndex<T> look1 = new LookForIndex<>(data, object, start, middle);
+        LookForIndex<T> look2 = new LookForIndex<>(data, object, middle, end);
+        look1.fork();
+        look2.fork();
+        int sum1 = look1.join();
+        int sum2 = look2.join();
+        return Math.max(sum1, sum2);
+    }
+
+    /**
+     * Вспомогательный метод для последовательного поиска индекса объекта;
+     *
+     * @return найденный индекс объекта, или -1, если объект не найден
+     */
+    private int sequentialSearch() {
+        for (int i = start; i < end; i++) {
+            if (data[i].equals(object)) {
+                return i;
+            }
+        }
+        return -1;
     }
 }
