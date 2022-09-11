@@ -90,4 +90,14 @@ class LookForIndexTest {
         int result = LookForIndex.lookForIndex(users, null);
         assertThat(result).isEqualTo(-1);
     }
+
+    @Test
+    void whenLookForNotSameDataTypeThenMinus1() {
+        User[] users = new User[3];
+        users[0] = new User("Ivan0", "0@mail.ru");
+        users[1] = new User("Ivan1", "1@mail.ru");
+        users[2] = new User("Ivan2", "2@mail.ru");
+        int result = LookForIndex.lookForIndex(users, 35);
+        assertThat(result).isEqualTo(-1);
+    }
 }
