@@ -64,7 +64,6 @@ public class RolColSum {
         }
         for (Integer key : futureMap.keySet()) {
             arr[key] = futureMap.get(key).get();
-            System.out.println(arr[key]);
         }
         return arr;
     }
