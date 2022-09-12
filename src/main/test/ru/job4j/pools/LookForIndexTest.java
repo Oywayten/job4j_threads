@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class LookForIndexTest {
 
     @Test
-    void whenArrLength3AndResultIndexIs1InMiddle() {
+    void whenUserArrLength3AndResultIndexIs1InMiddle() {
         User[] users = new User[3];
         users[0] = new User("Ivan0", "0@mail.ru");
         users[1] = new User("Ivan1", "1@mail.ru");
@@ -24,7 +24,7 @@ class LookForIndexTest {
     }
 
     @Test
-    void whenArrLength3AndIndexNotFoundResultIsMinus1() {
+    void whenUserArrLength3AndIndexNotFoundResultIsMinus1() {
         User[] users = new User[3];
         users[0] = new User("Ivan0", "0@mail.ru");
         users[1] = new User("Ivan1", "1@mail.ru");
@@ -34,7 +34,7 @@ class LookForIndexTest {
     }
 
     @Test
-    void whenArrLength20AndResultIndexIs19InTheEnd() {
+    void whenUserArrLength20AndResultIndexIs19InTheEnd() {
         User[] users = {
                 new User("Ivan0", "0@mail.ru"),
                 new User("Ivan1", "1@mail.ru"),
@@ -62,27 +62,27 @@ class LookForIndexTest {
     }
 
     @Test
-    void whenArrLength3WithNullAndLookForNullResultIs2() {
-        User[] users = new User[3];
-        users[0] = new User("Ivan0", "0@mail.ru");
-        users[1] = new User("Ivan1", "1@mail.ru");
-        users[2] = null;
-        int result = LookForIndex.lookForIndex(users, null);
+    void whenStringArrLength3SearchOneAndResultIndexIs1InMiddle() {
+        String[] strings = new String[3];
+        strings[0] = "zero";
+        strings[1] = "one";
+        strings[2] = "two";
+        int result = LookForIndex.lookForIndex(strings, "one");
+        assertThat(result).isEqualTo(1);
+    }
+
+    @Test
+    void whenIntegerArrLength3Search3AndResultIndexIs2InEnd() {
+        Integer[] ints = new Integer[3];
+        ints[0] = 1;
+        ints[1] = 2;
+        ints[2] = 3;
+        int result = LookForIndex.lookForIndex(ints, 3);
         assertThat(result).isEqualTo(2);
     }
 
     @Test
-    void whenArrLength3WithNullAndLookForIvan4ResultIsMinus1() {
-        User[] users = new User[3];
-        users[0] = new User("Ivan0", "0@mail.ru");
-        users[1] = new User("Ivan1", "1@mail.ru");
-        users[2] = null;
-        int result = LookForIndex.lookForIndex(users, new User("Ivan4", "4@mail.ru"));
-        assertThat(result).isEqualTo(-1);
-    }
-
-    @Test
-    void whenArrLength3WithoutNullAndLookForNullResultIsMinus1() {
+    void whenUserArrLength3WithoutNullAndLookForNullResultIsMinus1() {
         User[] users = new User[3];
         users[0] = new User("Ivan0", "0@mail.ru");
         users[1] = new User("Ivan1", "1@mail.ru");
@@ -92,7 +92,7 @@ class LookForIndexTest {
     }
 
     @Test
-    void whenLookForNotSameDataTypeThenMinus1() {
+    void whenUserArrLookForNotSameDataTypeThenMinus1() {
         User[] users = new User[3];
         users[0] = new User("Ivan0", "0@mail.ru");
         users[1] = new User("Ivan1", "1@mail.ru");

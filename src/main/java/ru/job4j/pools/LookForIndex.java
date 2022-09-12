@@ -33,7 +33,7 @@ public class LookForIndex<T> extends RecursiveTask<Integer> {
      * @return индекс объекта в массиве, либо -1, если объекта нет
      */
     public static <T> int lookForIndex(T[] array, T object) {
-        LookForIndex<T> look = new LookForIndex<>(array, object, 0, array.length);
+        LookForIndex<T> look = new LookForIndex<>(array, object, 0, array.length - 1);
         ForkJoinPool pool = ForkJoinPool.commonPool();
         return pool.invoke(look);
     }
@@ -63,12 +63,8 @@ public class LookForIndex<T> extends RecursiveTask<Integer> {
      * @return найденный индекс объекта, или -1, если объект не найден
      */
     private int sequentialSearch() {
-        for (int i = start; i < end; i++) {
-            if (data[i] == null) {
-                if (object == null) {
-                    return i;
-                }
-            } else if (data[i].equals(object)) {
+        for (int i = start; i <= end; i++) {
+            if (data[i].equals(object)) {
                 return i;
             }
         }
