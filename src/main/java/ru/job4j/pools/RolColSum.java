@@ -1,7 +1,10 @@
 package ru.job4j.pools;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -33,19 +36,10 @@ public class RolColSum {
      * @param matrix матрица для подсчета сумм столбцов и строк
      * @return массив сумм по i-той строке и столбцу типа Sum[]
      */
-    public static Sums[] sum(int[][] matrix) {
+    public static Sums[] inSeriesSum(int[][] matrix) {
         Sums[] arr = new Sums[matrix.length];
         for (int i = 0; i < matrix.length; i++) {
-            Sums tmp = new Sums();
-            int rowSum = 0;
-            int colSum = 0;
-            for (int j = 0; j < matrix[i].length; j++) {
-                rowSum += matrix[i][j];
-                colSum += matrix[j][i];
-            }
-            tmp.setRowSum(rowSum);
-            tmp.setColSum(colSum);
-            arr[i] = tmp;
+            arr[i] = getSums(matrix, i);
         }
         return arr;
     }
@@ -57,8 +51,8 @@ public class RolColSum {
      * @return массив сумм по i-той строке и столбцу типа Sum[]
      */
     public static Sums[] asyncSum(int[][] matrix) throws ExecutionException, InterruptedException {
-        Sums[] arr = new Sums[matrix.length];
         Map<Integer, CompletableFuture<Sums>> futureMap = new HashMap<>();
+        Sums[] arr = new Sums[matrix.length];
         for (int i = 0; i < matrix.length; i++) {
             futureMap.put(i, getTask(matrix, i));
         }
@@ -76,18 +70,29 @@ public class RolColSum {
      * @return возвращает CompletableFuture<Sums> для последующей обработки в основном методе
      */
     private static CompletableFuture<Sums> getTask(int[][] matrix, int num) {
-        return CompletableFuture.supplyAsync(() -> {
-            Sums tmp = new Sums();
-            int rowSum = 0;
-            int colSum = 0;
-            for (int j = 0; j < matrix[num].length; j++) {
-                rowSum += matrix[num][j];
-                colSum += matrix[j][num];
-            }
-            tmp.setRowSum(rowSum);
-            tmp.setColSum(colSum);
-            return tmp;
-        });
+        return CompletableFuture.supplyAsync(() -> getSums(matrix, num));
+    }
+
+    /**
+     * Метод непосредственно обходит столбцы и строки, и добавляет суммы в соответствующие поля
+     * объекта Sums.
+     *
+     * @param matrix матрица для обхода
+     * @param num    номер столбца и строки для обхода
+     * @return объект типа Sums
+     */
+    @NotNull
+    private static Sums getSums(int[][] matrix, int num) {
+        Sums tmp = new Sums();
+        int rowSum = 0;
+        int colSum = 0;
+        for (int j = 0; j < matrix[num].length; j++) {
+            rowSum += matrix[num][j];
+            colSum += matrix[j][num];
+        }
+        tmp.setRowSum(rowSum);
+        tmp.setColSum(colSum);
+        return tmp;
     }
 
     /**
@@ -120,6 +125,23 @@ public class RolColSum {
             sb.append(", colSum=").append(colSum);
             sb.append('}');
             return sb.toString();
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+            Sums sums = (Sums) o;
+            return rowSum == sums.rowSum && colSum == sums.colSum;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(rowSum, colSum);
         }
     }
 
