@@ -1,4 +1,4 @@
-package ru.job4j.pool;
+package ru.job4j.pools.pool;
 
 import ru.job4j.SimpleBlockingQueue;
 
@@ -39,6 +39,7 @@ public class ThreadPool {
                         tasks.poll().run();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
+                        Thread.currentThread().interrupt();
                     }
                 }
             });
