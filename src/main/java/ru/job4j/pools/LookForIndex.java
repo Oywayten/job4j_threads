@@ -7,7 +7,7 @@ import java.util.concurrent.RecursiveTask;
  * Класс реализует параллельный поиск индекса в массиве объектов.
  *
  * @author oywayten (cpc1251@mail.ru)
- * @version 1.0, 10.09.2022
+ * @version 1.1, 11.09.2022
  */
 public class LookForIndex<T> extends RecursiveTask<Integer> {
     private static final int SEQ_TRESHOLD = 10;
@@ -33,7 +33,7 @@ public class LookForIndex<T> extends RecursiveTask<Integer> {
      * @return индекс объекта в массиве, либо -1, если объекта нет
      */
     public static <T> int lookForIndex(T[] array, T object) {
-        LookForIndex<T> look = new LookForIndex<>(array, object, 0, array.length);
+        LookForIndex<T> look = new LookForIndex<>(array, object, 0, array.length - 1);
         ForkJoinPool pool = ForkJoinPool.commonPool();
         return pool.invoke(look);
     }
@@ -63,7 +63,7 @@ public class LookForIndex<T> extends RecursiveTask<Integer> {
      * @return найденный индекс объекта, или -1, если объект не найден
      */
     private int sequentialSearch() {
-        for (int i = start; i < end; i++) {
+        for (int i = start; i <= end; i++) {
             if (data[i].equals(object)) {
                 return i;
             }
