@@ -22,3 +22,4 @@ public class ParallelStreamExample {
         List<Integer> integers = stream1.sorted().peek(System.out::println).toList();
     }
 }
+
